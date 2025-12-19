@@ -1,6 +1,6 @@
-package rest.pkbe.service;
+package rest.pkbe.domain.service;
 
-import rest.pkbe.model.Tag;
+import rest.pkbe.domain.model.Tag;
 
 public interface ITagService {
 

@@ -1,5 +1,4 @@
-package rest.pkbe.model;
-
+package rest.pkbe.domain.model;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;

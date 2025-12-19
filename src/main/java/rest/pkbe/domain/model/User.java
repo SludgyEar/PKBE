@@ -1,4 +1,4 @@
-package rest.pkbe.model;
+package rest.pkbe.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

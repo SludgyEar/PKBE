@@ -1,9 +1,9 @@
-package rest.pkbe.repository;
+package rest.pkbe.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import rest.pkbe.model.NoteTag;
-import rest.pkbe.model.NoteTagId;
+import rest.pkbe.domain.model.NoteTag;
+import rest.pkbe.domain.model.NoteTagId;
 
 public interface NoteTagRepository extends JpaRepository<NoteTag, NoteTagId>{
     

@@ -1,13 +1,13 @@
-package rest.pkbe.service.impl;
+package rest.pkbe.domain.service.impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import rest.pkbe.model.Tag;
-import rest.pkbe.repository.TagRepository;
-import rest.pkbe.service.ITagService;
+import rest.pkbe.domain.model.Tag;
+import rest.pkbe.domain.repository.TagRepository;
+import rest.pkbe.domain.service.ITagService;
 
 @Service
 public class TagServiceImpl implements ITagService{

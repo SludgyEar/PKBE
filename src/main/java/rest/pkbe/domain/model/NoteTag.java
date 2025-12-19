@@ -1,4 +1,4 @@
-package rest.pkbe.model;
+package rest.pkbe.domain.model;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;

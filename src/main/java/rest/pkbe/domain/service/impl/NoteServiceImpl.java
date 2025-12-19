@@ -1,4 +1,4 @@
-package rest.pkbe.service.impl;
+package rest.pkbe.domain.service.impl;
 
 import java.util.Set;
 
@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
-import rest.pkbe.model.Note;
-import rest.pkbe.model.NoteTag;
-import rest.pkbe.model.Tag;
-import rest.pkbe.model.User;
-import rest.pkbe.repository.NoteRepository;
-import rest.pkbe.repository.NoteTagRepository;
-import rest.pkbe.repository.UserRepository;
-import rest.pkbe.service.INoteService;
+import rest.pkbe.domain.model.Note;
+import rest.pkbe.domain.model.NoteTag;
+import rest.pkbe.domain.model.Tag;
+import rest.pkbe.domain.model.User;
+import rest.pkbe.domain.repository.NoteRepository;
+import rest.pkbe.domain.repository.NoteTagRepository;
+import rest.pkbe.domain.repository.UserRepository;
+import rest.pkbe.domain.service.INoteService;
 
 @Service
 public class NoteServiceImpl implements INoteService{

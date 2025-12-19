@@ -1,12 +1,12 @@
-package rest.pkbe.service.impl;
+package rest.pkbe.domain.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import rest.pkbe.model.User;
-import rest.pkbe.repository.UserRepository;
-import rest.pkbe.service.IUserService;
+import rest.pkbe.domain.model.User;
+import rest.pkbe.domain.repository.UserRepository;
+import rest.pkbe.domain.service.IUserService;
 
 @Service
 public class UserServiceImpl implements IUserService{

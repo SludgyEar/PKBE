@@ -1,6 +1,10 @@
-package rest.pkbe.model;
+package rest.pkbe.domain.model;
 
+import java.time.LocalDateTime;
 import java.util.Set;
+
+import org.hibernate.annotations.CurrentTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,28 +24,40 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "tags", uniqueConstraints = {
-    @UniqueConstraint(name = "uq_user_tag", columnNames = {"user_id", "name"})
-})
+@Table(name = "notes")
 @Setter
 @Getter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Tag {
+@ToString
+// equals and hash
+public class Note {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", length = 50)
-    private String name;
+    @Column(name = "title", nullable = false, length = 150)
+    private String title;
 
+    @Column(name = "content", nullable = false)
+    private String content;
+
+    @Column(name = "created_at")
+    @CurrentTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    // Relación ManyToOne: muchas notas pertenecen a un usuario
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
+    // Relación de llave compuesta
+    @OneToMany(mappedBy = "note", fetch = FetchType.LAZY)
     private Set<NoteTag> noteTags;
 }
