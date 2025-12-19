@@ -7,7 +7,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,6 @@ import lombok.ToString;
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
 public class NoteTag {
@@ -27,6 +25,7 @@ public class NoteTag {
     public NoteTag(Note note, Tag tag) {
         this.note = note;
         this.tag = tag;
+        this.id = new NoteTagId(note.getId(), tag.getId());
     }
 
     @EmbeddedId

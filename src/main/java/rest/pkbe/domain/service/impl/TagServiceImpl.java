@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import rest.pkbe.domain.model.Tag;
+import rest.pkbe.domain.model.User;
 import rest.pkbe.domain.repository.TagRepository;
 import rest.pkbe.domain.service.ITagService;
 
@@ -17,14 +18,15 @@ public class TagServiceImpl implements ITagService{
 
     @Override
     @Transactional
-    public Tag getOrCreate(String name) {
+    public Tag getOrCreate(String name, User user) {
         /**
          * Busca un tag por su nombre, si no existe lo crea
          */
-        return tagRepository.findByName(name)
+        return tagRepository.findByNameAndUser(name, user)
                 .orElseGet(() -> {
                     Tag tag = new Tag();
                     tag.setName(name);
+                    tag.setUser(user);
                     return tagRepository.save(tag);
                 });
     }

@@ -34,6 +34,7 @@ public class NoteServiceImpl implements INoteService{
     public Note createNote(@NonNull Long userId, Note note, Set<String> tagNames) {
         /**
          * - En primer lugar se comprueba que el usuario no es null (porque usamos Long)
+         * - Comprobamos que la nota tenga al menos un tag
          * - Comprobamos si el usuario existe
          * - Ligamos la nota al usuario y la guardamos
          * - Recorremos los tags dados por el usuario y los adjuntamos a la nota a través de la relación NoteTag
@@ -41,11 +42,14 @@ public class NoteServiceImpl implements INoteService{
          */
         User user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("El usuario no existe"));
+        if(tagNames == null || tagNames.isEmpty()){
+            throw new IllegalArgumentException("La nota debe contener al menos una etiqueta");
+        }
         note.setUser(user);
         Note savedNote = noteRepository.save(note);
 
         for(String tagName : tagNames){
-            Tag tag = tagServiceImpl.getOrCreate(tagName);
+            Tag tag = tagServiceImpl.getOrCreate(tagName, user);
             NoteTag noteTag = new NoteTag(savedNote, tag);
             noteTagRepository.save(noteTag);
         }
