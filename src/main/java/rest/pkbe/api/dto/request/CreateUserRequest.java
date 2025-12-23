@@ -13,6 +13,14 @@ import jakarta.validation.constraints.NotBlank;;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * CreateUserRequest es un DTO que contiene datos simples pero necesarios para
+ * crear un usuario.
+ * La información recibida no puede estar vacía, lo cual se valida con jakarta
+ * validation constraints
+ * Se recibe un nombre, email y contraseña, la contraseña ya debe de estar encriptada,
+ * así la petición no viaja con información sensible en texto plano
+ */
 public class CreateUserRequest {
     @NotBlank(message = "El nombre no puede estar vacío")
     private String username;

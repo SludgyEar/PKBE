@@ -1,6 +1,8 @@
 package rest.pkbe.domain.service.impl;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -13,6 +15,8 @@ public class UserServiceImpl implements IUserService{
     
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     
     @Transactional
     @Override
@@ -24,6 +28,16 @@ public class UserServiceImpl implements IUserService{
             throw new IllegalArgumentException("El email ya está registrado");
         }
         return userRepository.save(user);
+    }
+
+    @Override
+    public User authenticate(String email, String password){
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Credenciales inválidas"));
+        if(!passwordEncoder.matches(password, user.getPasswordHash())){
+            throw new RuntimeException("Credenciales inválidas");
+        }
+        return user;
     }
     
 }
