@@ -1,4 +1,4 @@
-package rest.pkbe.api.dto.request;
+package rest.pkbe.api.dto.request.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

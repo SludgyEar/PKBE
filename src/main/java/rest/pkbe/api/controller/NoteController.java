@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import rest.pkbe.api.dto.NoteDTO;
-import rest.pkbe.api.dto.request.CreateNoteRequest;
+import rest.pkbe.api.dto.request.note.CreateNoteRequest;
+import rest.pkbe.api.dto.response.note.NoteDTO;
 import rest.pkbe.domain.model.Note;
 import rest.pkbe.domain.service.INoteService;
 
