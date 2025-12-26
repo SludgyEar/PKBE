@@ -1,4 +1,4 @@
-package rest.pkbe.api.dto.request;
+package rest.pkbe.api.dto.request.note;
 
 import java.util.Set;
 
