@@ -49,8 +49,14 @@ public class NoteController {
         note.setContent(req.getContent());
 
         Note saved = noteService.createNote(user.getId(), note, req.getTags());
-        // Cambiar el cómo se manda saved porque se manda recursivamente
-        return ResponseEntity.created(new URI("/user/"+ user.getId() + "/note/" + saved.getId())).body(saved);
+        NoteDTO res = NoteDTO.builder()
+            .id(saved.getId())
+            .title(saved.getTitle())
+            .content(saved.getContent())
+            .createdAt(saved.getCreatedAt().toString().split("T")[0])
+            .tags(req.getTags())
+            .build();
+        return ResponseEntity.created(new URI("/user/"+ user.getId() + "/note/" + res.getId())).body(res);
     }
 
     @GetMapping
