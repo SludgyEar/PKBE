@@ -5,8 +5,10 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -40,6 +42,42 @@ private long expirationMs;
             .compact();
     }
 
+    public boolean isTokenValid(String token, UserDetails userDetails){
+        // Sacamos el email del token
+        final String emailFromToken = extractEmail(token);
+        boolean isUserMatch = emailFromToken.equals(userDetails.getUsername());
+        boolean isTokenExpired = isTokenExpired(token);
+        return isUserMatch && !isTokenExpired;
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extracExpiration(token).before(new Date());
+    }
+
+    // Método para extraer todos los claims
+    public Claims extractClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    // Método para extraer la fecha de expiración
+    public Date extracExpiration(String token){
+        return extractClaims(token).getExpiration();    // Extrae la expiración
+    }
+
+    // Método para extraer el email del token
+    public String extractEmail(String token){
+        return Jwts.parser()
+            .verifyWith(getSignInKey())
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .get("email", String.class);    // En un claim tenemos guardado el email
+    }
+
     // Método para extraer id del token
     public Long extractUserId(String token){
         return Long.valueOf(
@@ -48,7 +86,7 @@ private long expirationMs;
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .getSubject()
+                .getSubject()   // En el subject tenemos el id de usuario
         );
     }
 

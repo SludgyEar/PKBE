@@ -20,7 +20,7 @@ public class UserDetailsServiceConfig implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userpreRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Correo no registrado"));
         return org.springframework.security.core.userdetails.User.builder()
-            .username(user.getUsername())
+            .username(user.getEmail())
             .password(user.getPasswordHash())
             .build();
     }
