@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import rest.pkbe.api.dto.request.note.CreateNoteRequest;
 import rest.pkbe.api.dto.response.note.NoteDTO;
 import rest.pkbe.domain.model.Note;
+import rest.pkbe.domain.model.User;
 import rest.pkbe.domain.service.INoteService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/api/notes")
+@RequestMapping("/notes")
 /**
  * Endpoint que atiende las peticiones relacionadas con notas
  */
@@ -35,28 +37,30 @@ public class NoteController {
     @Autowired
     private INoteService noteService; // Corrección: Inyectamos la interfaz, no la implementación
 
-    @PostMapping("/user/{userId}") // se sacará del token
-    public ResponseEntity<?> createNote(@PathVariable Long userId, @Valid @RequestBody CreateNoteRequest req)throws URISyntaxException {
+    @PostMapping
+    public ResponseEntity<?> createNote(@AuthenticationPrincipal User user, @Valid @RequestBody CreateNoteRequest req)
+    throws URISyntaxException {
         /**
          * Crea una nota con los valores recibidos a través de un DTO
-         * Se adjunta al usuario recibido por la path variable (temporal)
+         * Se obtiene el id del usuario que está logeado
          */
         Note note = new Note();
         note.setTitle(req.getTitle());
         note.setContent(req.getContent());
 
-        Note saved = noteService.createNote(userId, note, req.getTags());
-        return ResponseEntity.created(new URI("/user/"+ userId + "/note/" + saved.getId())).build();
+        Note saved = noteService.createNote(user.getId(), note, req.getTags());
+        // Cambiar el cómo se manda saved porque se manda recursivamente
+        return ResponseEntity.created(new URI("/user/"+ user.getId() + "/note/" + saved.getId())).body(saved);
     }
 
-    @GetMapping("/user/{userId}") // se sacará del token
-    public ResponseEntity<?> getAllUserNotes(@PathVariable Long userId){
+    @GetMapping
+    public ResponseEntity<?> getAllUserNotes(@AuthenticationPrincipal User user){
         /**
          * Obtiene las notas pertenecientes a un usuario dado su id
-         * El id se recupera de una path variable (temporal)
+         * El id se recupera del token de acceso
          * Se regresa una lista usando un DTO de respuesta como base
          */
-        List<NoteDTO> noteList = noteService.getAllNotes(userId)
+        List<NoteDTO> noteList = noteService.getAllNotes(user.getId())
             .stream()
             .map(note -> NoteDTO.builder()
             .id(note.getId())
@@ -70,26 +74,27 @@ public class NoteController {
         return ResponseEntity.ok(noteList);
     }
     
-    @DeleteMapping("/user/{userId}/{noteId}")   // se sacará del token
-    public ResponseEntity<?> deleteNoteById(@PathVariable Long userId, @PathVariable Long noteId) {
+    @DeleteMapping("/{noteId}")   // se sacará del token
+    public ResponseEntity<?> deleteNoteById(@PathVariable Long noteId, @AuthenticationPrincipal User user) {
         /**
          * Se elimina una nota dado un id de usuario y un id de nota
-         * Ambos id's se recuperan de los path variables, (temporal)
+         * noteId se recupera del path para identificar el recurso
+         * el id de usuario se recupera del token de acceso
          * Se elimina la nota pero no la tag, ya que una tag puede ser utilizada por una o más notas
          */
-        noteService.deleteNoteById(noteId, userId);
-        return ResponseEntity.ok("La nota con id " + noteId + " perteneciente al usuario con id " + userId + " se ha eliminado.");
+        noteService.deleteNoteById(noteId, user.getId());
+        return ResponseEntity.ok("La nota con id " + noteId + " perteneciente al usuario con id " + user.getId() + " se ha eliminado.");
     }
     
-    @PatchMapping("/user/{userId}/{noteId}")
-    public ResponseEntity<?> updateNoteById(@PathVariable Long userId, @PathVariable Long noteId, @RequestBody NoteDTO req){
+    @PatchMapping("/{noteId}")
+    public ResponseEntity<?> updateNoteById(@AuthenticationPrincipal User user, @PathVariable Long noteId, @RequestBody NoteDTO req){
         /**
-         * Se reciben id's de dos path variables, identifican al usuario dueño de la nota y la nota que se quiere modificar
+         * noteId se recupera del path para identificar el recurso
+         * el id de usuario se recupera del token de acceso
          * Además se incluye un DTO que contiene los nuevos datos que se requieren actualizar
-         * Los id's recuperados de los path variables son temporales
          */
-        noteService.updateNoteById(noteId, userId, req.getTitle(), req.getContent(), req.getTags());
-        return ResponseEntity.ok("La nota con el id " + noteId + " perteneciente al usuario con id " + userId + " ha sido actualizada.");
+        noteService.updateNoteById(noteId, user.getId(), req.getTitle(), req.getContent(), req.getTags());
+        return ResponseEntity.ok("La nota con el id " + noteId + " perteneciente al usuario con id " + user.getId() + " ha sido actualizada.");
     }
 
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/sin-uso")
 /**
  * Endpoint que atiende las peticiones relacionadas con los usuarios
  */
