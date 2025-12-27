@@ -62,12 +62,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
             // Cargar los detalles del usuario desde la base de datos
             UserDetails userDetails = this.userDetailsServiceConfig.loadUserByUsername(userEmail);
+            System.out.println("*************************");
+            System.out.println("userDetails: " + userDetails);
+            System.out.println("*************************");
             // Verificar si el token es válido para el usuario
             if(jwtService.isTokenValid(jwt, userDetails)){
                 // Crear el objeto de autenticación y establecerlo en el contexto de seguridad
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("*************************");
+                System.out.println("Context listo");
+                System.out.println("*************************");
+            }else{
+                System.out.println("*************************");
+                System.out.println("Ni entró al if");
+                System.out.println("*************************");
             }
         }
         // Continuar con la cadena de filtros

@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,8 +58,8 @@ public class AuthController {
     }
 
     @GetMapping("/test")
-    public String test(@AuthenticationPrincipal UserDetails user) {
-        return "Marivi es una enamorada " + user.getUsername();
+    public String test(@AuthenticationPrincipal User user) {
+        return "Marivi es una enamorada " + user.getNombreUsuario() + " " + user.getEmail() + " id: " + user.getId();
     }
     
     

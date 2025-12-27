@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import rest.pkbe.domain.model.User;
 import rest.pkbe.domain.repository.UserRepository;
 
 
@@ -35,11 +34,8 @@ public class UserDetailsServiceConfig implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userpreRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Correo no registrado"));
-        return org.springframework.security.core.userdetails.User.builder()
-            .username(user.getEmail())
-            .password(user.getPasswordHash())
-            .build();
+        return userpreRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Correo no registrado"));
     }
     
 }
