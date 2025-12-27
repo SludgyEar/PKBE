@@ -34,6 +34,10 @@ public class AuthController {
     
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest req) {
+        /**
+         * A través de un DTO recibimos las credenciales de un usuario para autenticarlo
+         * Si la autenticación es exitosa, se regresa un token de acceso
+         */
         String token = userService.authenticate(req.getEmail(), req.getPassword());
         return ResponseEntity.ok(new AuthResponse(token));
     }

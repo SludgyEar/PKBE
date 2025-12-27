@@ -16,34 +16,46 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
+/**
+ * Configuración principal de seguridad para la aplicación.
+ * Define la política de autenticación, autorización, manejo de sesiones y filtros de seguridad.
+ * Utiliza JWT para autenticación sin estado y permite acceso libre a endpoints de autenticación.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    // Servicio para cargar usuarios desde la base de datos
     private final UserDetailsServiceConfig userDetailsService;
+    // Filtro para validar JWT en cada petición
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    /**
+     * Bean para codificar contraseñas usando BCrypt.
+     */
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configura la cadena de filtros de seguridad de Spring Security.
+     *   Deshabilita CSRF (no necesario para APIs REST con JWT)
+     *   Permite acceso libre a /auth/** y /error
+     *   Requiere autenticación para cualquier otro endpoint
+     *   Establece la política de sesión como Stateless
+     *   Agrega el filtro JWT antes del filtro de autenticación por usuario/contraseña
+     */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            // Deshabilitar CSRF
-            // Forma moderna usando Lambda:
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                // Permitir acceso total a login y register
                 .requestMatchers("/auth/**").permitAll() 
                 .requestMatchers("/error").permitAll()
-                // Cualquier otra petición requiere autenticación
                 .anyRequest().authenticated()
             )
-            // Manejo de sesiones
-            // No guardar estado en el servidor (Stateless)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
@@ -51,6 +63,9 @@ public class SecurityConfig {
             .build();
     }
 
+    /**
+     * Bean que define el proveedor de autenticación usando el servicio personalizado y el encoder de contraseñas.
+     */
     @Bean
     AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
@@ -58,6 +73,9 @@ public class SecurityConfig {
         return authProvider;
     }
 
+    /**
+     * Bean para obtener el AuthenticationManager de la configuración de Spring Security.
+     */
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
         return config.getAuthenticationManager();

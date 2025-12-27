@@ -7,6 +7,10 @@ import lombok.Setter;
 @Setter
 @Getter
 public class AuthResponse {
+    /**
+     * DTO de respuesta a un login exitoso
+     * Solo contiene un token de acceso
+     */
     @NotBlank
     private String accessToken;
 
