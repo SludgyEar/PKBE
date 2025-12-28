@@ -1,0 +1,15 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### VS Code ###
+.vscode/
+.env
+.mvn/
+
+### Spring Boot ###
+src/main/resources/application.properties
+src/test
+src/main/resources/META-INF/additional-spring-configuration-metadata.json

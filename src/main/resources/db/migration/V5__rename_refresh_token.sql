@@ -1,0 +1,1 @@
+ALTER TABLE token_refresh RENAME TO refresh_token;
