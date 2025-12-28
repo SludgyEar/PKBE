@@ -30,6 +30,9 @@ private String secret;
 @Value("${jwt.expiration}")
 private long expirationMs;
 
+@Value("${jwt.refresh-expiration}")
+private long refreshExpirationMs;
+
     // Método para obtener la llave
     /**
      * Obtiene la clave secreta para firmar y verificar los tokens JWT.
@@ -53,6 +56,21 @@ private long expirationMs;
             .claim("email", user.getEmail())
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + expirationMs))
+            .signWith(getSignInKey(), Jwts.SIG.HS256)
+            .compact();
+    }
+
+    // Método para generar un token de refresco de sesión
+    /**
+     * Genera un token JWT para que el usuario proporcionado refresque su sesión
+     * @param user usuario para el cual se genera el token
+     * @return token JWT como String
+     */
+    public String generateRefreshToken(User user){
+        return Jwts.builder()
+            .subject(user.getId().toString())
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + refreshExpirationMs))
             .signWith(getSignInKey(), Jwts.SIG.HS256)
             .compact();
     }
