@@ -13,7 +13,10 @@ import rest.pkbe.domain.service.IUserService;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,10 +38,20 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest req) {
         /**
          * A través de un DTO recibimos las credenciales de un usuario para autenticarlo
-         * Si la autenticación es exitosa, se regresa un token de acceso
+         * Si la autenticación es exitosa, se regresa un token de acceso y un token de refresco, ambos Strings
+         * Creamos una cookie para mandar el token de refresco y envíamos el token de acceso en la respuesta JSON
          */
-        String token = userService.authenticate(req.getEmail(), req.getPassword());
-        return ResponseEntity.ok(new AuthResponse(token));
+        String [] response = userService.authenticate(req.getEmail(), req.getPassword());
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", response[1])
+            .httpOnly(true)
+            .secure(false) // solo se envía por https
+            .path("/") // disponible en toda la aplicación
+            .maxAge(7 * 24 * 60 * 60)
+            .sameSite("Lax")
+            .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+            .body(new AuthResponse(response[0]));
     }
 
     @PostMapping("/register")

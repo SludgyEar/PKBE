@@ -31,7 +31,7 @@ import lombok.ToString;
 @Table(name = "users")
 @Setter
 @Getter
-@ToString(exclude = {"notas", "tags"})
+@ToString(exclude = {"notas", "tags", "token"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

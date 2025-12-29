@@ -45,7 +45,7 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public String authenticate(String email, String password){
+    public String[] authenticate(String email, String password){
         // Creamos dos tokens sin autenticar, uno para la sesión y otro para refresco de sesión
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password);
         // El manager se encarga de autenticarlo: llama internamente a UserDetailsServiceConfig -> loadByUsername (email) y si falla manda una exception
@@ -64,9 +64,10 @@ public class UserServiceImpl implements IUserService{
         Date expirationDate = jwtService.extracExpiration(refreshToken);
         LocalDateTime expirLocalDateTime = LocalDateTime.ofInstant(expirationDate.toInstant(), ZoneId.systemDefault());
         persistencedRefreshToken.setExpirationDate(expirLocalDateTime);
-        // Guardamos token de refresco
+        // Guardamos token de refresco en la base de datos
         refreshTokenRepository.save(persistencedRefreshToken);
-        return token;
+        String [] res = {token, refreshToken};
+        return res;
     }
     
 }
