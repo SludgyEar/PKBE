@@ -18,10 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -70,9 +70,18 @@ public class AuthController {
         return ResponseEntity.created(new URI("/users/" + saved.getId())).build();
     }
 
-    @GetMapping("/test")
-    public String test(@AuthenticationPrincipal User user) {
-        return "Marivi es una enamorada " + user.getNombreUsuario() + " " + user.getEmail() + " id: " + user.getId();
+    @GetMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@CookieValue String refreshToken) {
+        String[] response = userService.refreshSession(refreshToken);
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", response[1])
+                .httpOnly(true)
+                .secure(false) // solo se envía por https
+                .path("/") // disponible en toda la aplicación
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("Lax")
+                .build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(new AuthResponse(response[0]));
     }
     
     

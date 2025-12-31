@@ -94,7 +94,7 @@ private long refreshExpirationMs;
      * @param token token JWT
      * @return true si el token está expirado, false si aún es válido
      */
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extracExpiration(token).before(new Date());
     }
 

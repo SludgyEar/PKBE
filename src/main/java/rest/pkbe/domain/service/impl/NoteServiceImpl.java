@@ -22,6 +22,7 @@ import rest.pkbe.domain.repository.NoteTagRepository;
 import rest.pkbe.domain.repository.UserRepository;
 import rest.pkbe.domain.service.INoteService;
 import rest.pkbe.domain.service.ITagService;
+import rest.pkbe.exception.exceptions.ResourceNotFoundException;
 
 @Service
 public class NoteServiceImpl implements INoteService{
@@ -51,7 +52,7 @@ public class NoteServiceImpl implements INoteService{
          * - Una vez que hayamos terminado de ligar los tags con la nota principal, la regresamos
          */
         User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("El usuario no existe"));
+                    .orElseThrow(() -> new ResourceNotFoundException("El usuario no existe"));
         if(tagNames == null || tagNames.isEmpty()){
             throw new IllegalArgumentException("La nota debe contener al menos una etiqueta");
         }
@@ -74,7 +75,7 @@ public class NoteServiceImpl implements INoteService{
          * - Retornamos las notas que le pertencen
          */
         userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("El usuario no existe"));
+                .orElseThrow(() -> new ResourceNotFoundException("El usuario no existe"));
 
         List<Note> noteList = noteRepository.findAllByUserIdWithTags(userId);
 
@@ -86,15 +87,12 @@ public class NoteServiceImpl implements INoteService{
     public void deleteNoteById(@NonNull Long noteId, @NonNull Long userId){
         /**
          * - Para borrar una nota corroboramos que la nota exista y le pertenezca al usuario
-         * - La sacamos para que JPA pueda borrar el objeto completo
+         * - Borramos la nota pero no sus tags
          */
         if(!noteRepository.existsByIdAndUserId(noteId, userId)){
-            throw new IllegalArgumentException("El usuario no tiene una nota con las características dadas");
+            throw new ResourceNotFoundException("No tienes una nota con estas características");
         }
-        Optional<Note> toDelete = noteRepository.findById(noteId);
-        Note note = toDelete.get();
-        note.getNoteTags().size();  // forzamos la carga de relaciones (está de más)
-        noteRepository.delete(note);
+        noteRepository.deleteById(noteId);
     }
 
     @Override
@@ -138,7 +136,7 @@ public class NoteServiceImpl implements INoteService{
             }
             noteRepository.save(updatedNote);
         }else{
-            throw new IllegalArgumentException("La nota no existe");
+            throw new ResourceNotFoundException("La nota no existe");
         }
     }
 
