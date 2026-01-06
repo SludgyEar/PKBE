@@ -8,6 +8,7 @@ target/
 .vscode/
 .env
 .mvn/
+/logs
 
 ### Spring Boot ###
 src/main/resources/application.properties

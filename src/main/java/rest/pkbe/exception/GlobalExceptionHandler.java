@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -39,6 +41,30 @@ import rest.pkbe.exception.exceptions.ResourceNotFoundException;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    /**
+     * Para evitar repetir código, creamos una función que inicialice una respuesta JSON para
+     * el error que se haya presentado.
+     * Por defecto, tienen el timestamp al momento de su creación, añadimos sus valores para enviarla
+     */
+    private ExceptionResponse buildResponse(int status, String error, String message, String path){
+
+        ExceptionResponse response = new ExceptionResponse();
+        response.setTimeStamp(LocalDateTime.now());
+        response.setStatus(status);
+        response.setError(error);
+        response.setMessage(message);
+        response.setPath(path);
+
+        logger.error(
+            "Solicitud fallida... \nTimeStamp: {}\nStatus: {}\nError: {}\nMessage: {}\nPath: {}",
+            LocalDateTime.now(), status, error, message, path);
+        return response;
+    }
+
+
     // =====================
     // Excepciones relacionadas con JWT y autenticación
     // =====================
@@ -50,16 +76,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ExceptionResponse> handleJwtException(JwtException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setError("Sin acceso");
-        response.setMessage("Credenciales inválidas");
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(response);
+                .body(
+                    buildResponse(HttpStatus.UNAUTHORIZED.value(), "Sin acceso", "Credenciales inválidas", 
+                        request.getRequestURI())
+                    );
     }
 
     /**
@@ -78,16 +100,12 @@ public class GlobalExceptionHandler {
                     .maxAge(0)
                     .build();
 
-        ExceptionResponse response = new ExceptionResponse();
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setError("Token inválido");
-        response.setMessage(ex.getMessage());
-        response.setPath(request.getRequestURI());
-
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .header(HttpHeaders.SET_COOKIE, cleanCookie.toString())
-                .body(response);
+                .body(
+                    buildResponse(HttpStatus.UNAUTHORIZED.value(), "Token inválido", "Credenciales inválidas",
+                            request.getRequestURI())
+                );
     }
 
     /**
@@ -98,16 +116,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionResponse> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setError("Sin acceso");
-        response.setMessage("Credenciales inválidas");
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(response);
+                .body(buildResponse(HttpStatus.UNAUTHORIZED.value(), "Sin acceso", "Credenciales inválidas",
+                        request.getRequestURI()));
     }
 
     /**
@@ -118,16 +130,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ExceptionResponse> handleExpiredToken(ExpiredJwtException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setError("Sin acceso");
-        response.setMessage("Credenciales inválidas");
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(response);
+                .body(buildResponse(HttpStatus.UNAUTHORIZED.value(), "Sin acceso", "Credenciales inválidas",
+                        request.getRequestURI()));
     }
 
     /**
@@ -138,16 +144,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(SignatureException.class)
     public ResponseEntity<ExceptionResponse> handleSignatureJwtException(SignatureException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setError("Sin acceso");
-        response.setMessage("Credenciales inválidas");
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(response);
+                .body(buildResponse(HttpStatus.UNAUTHORIZED.value(), "Sin acceso", "Credenciales inválidas",
+                        request.getRequestURI()));
     }
 
     /**
@@ -158,16 +158,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MalformedJwtException.class)
     public ResponseEntity<ExceptionResponse> handleMalformedToken(MalformedJwtException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setError("Sin acceso");
-        response.setMessage("Credenciales inválidas");
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(response);
+                .body(buildResponse(HttpStatus.UNAUTHORIZED.value(), "Sin acceso", "Credenciales inválidas",
+                        request.getRequestURI()));
 
     }
 
@@ -179,16 +173,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ExceptionResponse> handleAuthenticationException(AuthenticationException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setError("Sin acceso");
-        response.setMessage("Credenciales inválidas");
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(response);
+                .body(buildResponse(HttpStatus.UNAUTHORIZED.value(), "Sin acceso", "Credenciales inválidas",
+                        request.getRequestURI()));
 
     }
 
@@ -203,16 +191,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(URISyntaxException.class)
     public ResponseEntity<ExceptionResponse> handleURISyntaxException(URISyntaxException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        response.setError("Error en la construcción del recurso");
-        response.setMessage("No se pudo generar la URI de confirmación: "+ ex.getReason());
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(response);
+                .body(buildResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), 
+                        "Error en la construcción del recurso", "No se pudo generar la URI de confirmación: "+ ex.getReason(),
+                        request.getRequestURI()));
     }
 
     /**
@@ -223,8 +206,6 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class) // Cuando un @Validated falla
     public ResponseEntity<ExceptionResponse> handleConstraintValidation(ConstraintViolationException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
         String detailMessage = ex.getConstraintViolations().stream()
                 .map(violation -> {
                     String path = violation.getPropertyPath().toString();
@@ -233,14 +214,10 @@ public class GlobalExceptionHandler {
                 })
                 .collect(Collectors.joining(", "));
 
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setError("Datos inválidos");
-        response.setMessage("Validación de argumentos fallida: " + detailMessage);
-        response.setPath(request.getRequestURI());
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(response);
+                .body(
+                    buildResponse(HttpStatus.BAD_REQUEST.value(), "Datos inválidos", "Validación de argumentos fallida" + detailMessage, request.getRequestURI())
+                );
     }
 
     /**
@@ -252,16 +229,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class) // Cuando se viola integridad de base de datos
     public ResponseEntity<ExceptionResponse> handleHibernateConstraintValidation(
             org.springframework.dao.DataIntegrityViolationException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.CONFLICT.value());
-        response.setError("Error de integridad de datos");
-        response.setMessage("No se puede completar la operación por restricciones existentes");
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(response);
+                .body(
+                    buildResponse(HttpStatus.CONFLICT.value(), "Error de integridad de datos", "No se puede completar la operación por restricciones existentes", request.getRequestURI())
+                );
     }
 
     /**
@@ -272,20 +244,16 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
 
             String detailMessage = ex.getBindingResult().getFieldErrors().stream()
             .map(error -> error.getField() + ": " + error.getDefaultMessage())
             .collect(Collectors.joining(", "));
 
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setError("Datos inválidos");
-        response.setMessage("Validación de datos fallida: "+detailMessage);
-        response.setPath(request.getRequestURI());
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(response);
+                    .body(
+                        buildResponse(HttpStatus.BAD_REQUEST.value(), "Datos inválidos", 
+                                "Validación de datos fallida: " + detailMessage, request.getRequestURI())
+                    );
     }
 
     // =====================
@@ -299,16 +267,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleUsernameNotFoundException(UsernameNotFoundException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-        
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.NOT_FOUND.value());
-        response.setError("Usuario no encontrado");
-        response.setMessage(ex.getMessage());
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(response);
+                .body(buildResponse(HttpStatus.NOT_FOUND.value(), "Usuario no encontrado", ex.getMessage(), request.getRequestURI()));
     }
 
     /**
@@ -319,16 +280,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.NOT_FOUND.value());
-        response.setError("Recurso no encontrado");
-        response.setMessage(ex.getMessage());
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(response);
+                .body(buildResponse(HttpStatus.NOT_FOUND.value(), "Recurso no encontrado", ex.getMessage(), 
+                        request.getRequestURI()));
     }
 
     /**
@@ -339,16 +294,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ExceptionResponse> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setError("Petición inválida");
-        response.setMessage("Datos inválidos: " + ex.getMessage());
-        response.setPath(request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(response);
+                .body(buildResponse(HttpStatus.BAD_REQUEST.value(), "Petición inválida", 
+                        "Datos inválidos: " + ex.getMessage(), request.getRequestURI()));
     }
 
     // =====================
@@ -362,16 +311,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleGeneralException(Exception ex, HttpServletRequest request){
-        ExceptionResponse response = new ExceptionResponse();
-
-        response.setTimeStamp(LocalDateTime.now());
-        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        response.setError("Erro interno de servidor");
-        response.setMessage("Ocurrió un error inesperado en el servidor. Intente más tarde");
-        response.setPath(request.getRequestURI());
-
+        
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(response);
+                .body(buildResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno de servidor", 
+                        "Ocurrió un error inesperado en el servidor. Intente más tarde", request.getRequestURI()));
     }
 
 }

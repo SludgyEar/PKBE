@@ -1,5 +1,7 @@
 package rest.pkbe.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +24,7 @@ public class UserDetailsServiceConfig implements UserDetailsService {
 
     @Autowired
     private UserRepository userpreRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceConfig.class);
 
     /**
      * Carga los detalles de un usuario a partir de su email.
@@ -34,8 +37,12 @@ public class UserDetailsServiceConfig implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        logger.debug("> Cargando datos para su validación...");
         return userpreRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Correo no registrado"));
+                .orElseThrow(() -> {
+                    logger.error("Proceso de autenticación fallido: Usuario no encontrado");
+                    return new UsernameNotFoundException("Credenciales inválidas");
+                });
     }
     
 }

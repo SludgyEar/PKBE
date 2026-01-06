@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,10 +41,13 @@ public class NoteServiceImpl implements INoteService{
     @Autowired
     private ITagService tagService; // Corrección: Inyectamos la interfaz, no la implementación
 
+    private static final Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
+
 
     @Override
     @Transactional
     public Note createNote(@NonNull Long userId, Note note, Set<String> tagNames) {
+        logger.info("Registrando nota en la base de datos...");
         /**
          * - En primer lugar se comprueba que el usuario no es null (porque usamos Long)
          * - Comprobamos que la nota tenga al menos un tag
@@ -52,8 +57,12 @@ public class NoteServiceImpl implements INoteService{
          * - Una vez que hayamos terminado de ligar los tags con la nota principal, la regresamos
          */
         User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("El usuario no existe"));
+                    .orElseThrow(() -> {
+                        logger.error("Intento de registro fallido: El usuario no existe");
+                        return new ResourceNotFoundException("El usuario no existe");
+                    });
         if(tagNames == null || tagNames.isEmpty()){
+            logger.error("Intento de registro fallido: La nota debe contener al menos una etiqueta");
             throw new IllegalArgumentException("La nota debe contener al menos una etiqueta");
         }
         note.setUser(user);
@@ -64,40 +73,49 @@ public class NoteServiceImpl implements INoteService{
             NoteTag noteTag = new NoteTag(savedNote, tag);
             noteTagRepository.save(noteTag);
         }
+        logger.info("Nota registrada exitosamente [!]");
         return savedNote;
     }
 
     @Override
     public List<Note> getAllNotes(@NonNull Long userId){
+        logger.info("Obteniendo notas de usuario...");
         /**
          * - Primero se comprueba que el id no sea nulo
          * - Comprobamos que el usuario existe
          * - Retornamos las notas que le pertencen
          */
         userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("El usuario no existe"));
+                .orElseThrow(() -> {
+                    logger.error("Obtención de notas fallida: El usuario no existe");
+                    return new ResourceNotFoundException("El usuario no existe");
+                });
 
         List<Note> noteList = noteRepository.findAllByUserIdWithTags(userId);
-
+        logger.info("Notas obtenidas exitosamente [!]");
         return noteList;
     }
 
     @Override
     @Transactional
     public void deleteNoteById(@NonNull Long noteId, @NonNull Long userId){
+        logger.info("Eliminando nota de la base de datos...");
         /**
          * - Para borrar una nota corroboramos que la nota exista y le pertenezca al usuario
          * - Borramos la nota pero no sus tags
          */
         if(!noteRepository.existsByIdAndUserId(noteId, userId)){
-            throw new ResourceNotFoundException("No tienes una nota con estas características");
+            logger.error("Eliminación fallida: La nota no existe");
+            throw new ResourceNotFoundException("La nota no existe");
         }
+        logger.info("Nota eliminada exitosamente [!]");
         noteRepository.deleteById(noteId);
     }
 
     @Override
     @Transactional
     public void updateNoteById(@NonNull Long noteId, @NonNull Long userId, String title, String content, Set<String> tagNames){
+        logger.info("Actualizando nota...");
         /**
          * Para editar una nota, recibimos el id de la nota, el id del usuario dueño, además, el contenido que va a ser editado
          * Primero corroboramos si los campos simples no son nulos, si no lo son, los actualizamos.
@@ -116,6 +134,7 @@ public class NoteServiceImpl implements INoteService{
                 updatedNote.setContent(content);
             }
             if(tagNames != null){
+                logger.warn("Actualizando relaciones de TAGS...");
                 Set<NoteTag> current = updatedNote.getNoteTags();
                 // Mapear tags actuales por nombre
                 Map<String, NoteTag> currentByName = current.stream().collect(Collectors.toMap(nt -> nt.getTag().getName(), Function.identity()));
@@ -134,8 +153,10 @@ public class NoteServiceImpl implements INoteService{
                 current.clear();
                 current.addAll(updated);
             }
+            logger.info("Actualización de una nota exitosa [!]");
             noteRepository.save(updatedNote);
         }else{
+            logger.error("Actualización fallida: La nota no existe");
             throw new ResourceNotFoundException("La nota no existe");
         }
     }

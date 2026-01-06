@@ -2,6 +2,8 @@ package rest.pkbe.config;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     private final UserDetailsServiceConfig userDetailsServiceConfig;
     // Interfaz que intercepta y resuelve excepciones que ocurren durante la ejecución de una petición HTTP (antes de llegar al controller correspondiente (middleware))
     private final HandlerExceptionResolver resolver;
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     public JwtAuthenticationFilter(
         JwtService jwtService,
@@ -56,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
         throws ServletException, IOException {
-        
+            logger.info("Petición de autenticación aceptada. Procesando solicitud...");
             try {
                 
                 final String authHeader = request.getHeader("Authorization");
@@ -73,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 jwt = authHeader.substring(7);
                 // Extraer el email del usuario desde el token
                 userEmail = jwtService.extractEmail(jwt);
-
+                logger.debug("> Token capturado");
                 // Si se extrajo un email y el usuario aún no está autenticado en el contexto
                 if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     // Cargar los detalles del usuario desde la base de datos
@@ -85,9 +88,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                                 userDetails, null, userDetails.getAuthorities());
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authToken);
+                        logger.debug("> Token válido");
                     }
                 }
                 // Continuar con la cadena de filtros
+                logger.info("Autenticación en proceso...");
                 filterChain.doFilter(request, response);
 
             } catch (Exception ex) {
@@ -97,6 +102,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                  * definimos para las posibles excepciones que se pueden producir
                  * ExpiredJwtEx.., SignatureEx.., MalformedJwtEx.., etc.
                  */
+                logger.error("Proceso de Autenticación fallido: Credenciales inválidas");
+                logger.error(ex.getMessage());
                 resolver.resolveException(request, response, null, ex);
             }
     }
