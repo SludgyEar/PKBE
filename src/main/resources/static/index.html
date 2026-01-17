@@ -6,7 +6,8 @@
     <title>PKBE</title>
     <link rel="stylesheet" href="./css/index.css">
     <script src="https://kit.fontawesome.com/77f269903b.js" crossorigin="anonymous"></script>
-    <script src="./js/auth.js" defer></script>
+    <script src="./js/auth.js" defer type="module"></script>
+    <script src="./js/notes.js" defer type="module"></script>
 </head>
 <body>
 
@@ -235,26 +236,34 @@
                 <form class="editor-card" id="create-note-panel">
         
                     <div class="editor-header">
-                        <input type="text" class="title-input" placeholder="Título de la nota..." required>
+                        <input type="text" class="title-input" placeholder="Título de la nota..." required id="title-input">
                         <div class="header-actions">
                             <button class="btn btn-secondary" type="reset">Cancelar</button>
-                            <button class="btn btn-primary" type="submit">Guardar nota</button>
+                            <button class="btn btn-primary" type="submit" id="create-note-button">
+                                <span id="btn-content-normal-create">
+                                    Guardar nota
+                                </span>
+                                <span class="hidden" id="btn-content-loading-create" style="display: inline-flex;">
+                                    <span class="spinner"></span>
+                                    Guardando...
+                                </span>
+                            </button>
                         </div>
                     </div>
         
                     <div class="editor-body">
                         <div class="editor-pane">
                             <label class="pane-label">Markdown / Escribir</label>
-                            <textarea placeholder="Escribe tu nota aquí... (# Hola mundo)"></textarea>
+                            <textarea placeholder="Escribe tu nota aquí... (# Hola mundo)" required id="content-input"></textarea>
                             <div class="tag-panel">
                                 <div class="tag-input-wrapper">
-                                    <input type="text" class="form-input" placeholder="Ingresa una etiqueta (Música)" required id="input-tag"
-                                    style="margin-top: 10px;">  
-                                    <button type="button" class="btn btn-primary">
+                                    <input type="text" class="form-input" placeholder="Ingresa una etiqueta (Música)" 
+                                    style="margin-top: 10px;" id="tag-input-label">  
+                                    <button type="button" class="btn btn-primary" id="tag-add-btn">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
                                 </div>
-                                <textarea  id="tags-textarea" readonly style="margin-top: 10px; height: 20%; cursor: default;"></textarea>
+                                <textarea  id="tags-input" readonly style="margin-top: 10px; height: 20%; cursor: default;"></textarea>
                             </div>
                         </div>
         

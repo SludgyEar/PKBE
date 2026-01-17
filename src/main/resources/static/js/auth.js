@@ -149,5 +149,9 @@ document.addEventListener('DOMContentLoaded', () =>{
         loginView.classList.add('hidden');
         registerView.classList.add('hidden');
         notesView.classList.remove('hidden');
+    }else{
+        loginView.classList.remove('hidden');
+        registerView.classList.add('hidden');
+        notesView.classList.add('hidden');
     }
 });
