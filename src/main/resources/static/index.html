@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PKBE</title>
+    <link rel="shortcut icon" href="./images/icon.png" type="image/png">
     <link rel="stylesheet" href="./css/index.css">
     <script src="https://kit.fontawesome.com/77f269903b.js" crossorigin="anonymous"></script>
     <script src="./js/auth.js" defer type="module"></script>
@@ -208,13 +209,21 @@
                     <li></li>
                 </ul>
             </div>
-        
+            <div id="confirm-modal" class="modal-overlay hidden">
+                <div class="modal-content">
+                    <h3>¿Estás seguro?</h4>
+                    <h4>¡Quédate un rato más!</h4>
+                    <div class="modal-actions">
+                        <button id="cancel-modal-btn" class="btn btn-secondary">Cancelar</button>
+                        <button id="confirm-modal-btn" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            </div>
             <div class="card-container">
-        
                 <aside class="side-box">
                     <h2 class="app-logo">Mis Notas</h2>
                     <nav style="display: flex; flex-grow: 1; flex-direction: column;">
-                        <button id="crear-nota-btn" class="nav-btn active">
+                        <button id="crear-nota-btn" class="nav-btn active" disabled>
                             <span class="icon">
                                 <i class="fa-solid fa-file-circle-plus"></i>
                                 Crear una nota
@@ -254,7 +263,7 @@
                     <div class="editor-body">
                         <div class="editor-pane">
                             <label class="pane-label">Markdown / Escribir</label>
-                            <textarea placeholder="Escribe tu nota aquí... (# Hola mundo)" required id="content-input"></textarea>
+                            <textarea placeholder="Escribe tu nota aquí... (# Hola mundo)" required id="content-input" class="textarea-content"></textarea>
                             <div class="tag-panel">
                                 <div class="tag-input-wrapper">
                                     <input type="text" class="form-input" placeholder="Ingresa una etiqueta (Música)" 
@@ -277,8 +286,8 @@
         
                 </form>
 
-                <div class="editor-card hidden" id="list-notes-panel">
-
+                <div class="editor-card hidden" id="get-notes-panel">
+                    <div class="note-list-container" id="note-list-container"></div>
                 </div>
 
             </div>

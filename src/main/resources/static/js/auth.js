@@ -1,3 +1,5 @@
+// Cerrar sesión
+const logOutBtn = document.getElementById('cerrar-sesion');
 // Cambiar entre la pantalla de login y de registro
 const toRegisterBtn = document.getElementById('to-register-btn');
 const toLoginBtn = document.getElementById('to-login-btn');
@@ -154,4 +156,20 @@ document.addEventListener('DOMContentLoaded', () =>{
         registerView.classList.add('hidden');
         notesView.classList.add('hidden');
     }
+});
+
+logOutBtn.addEventListener('click', () => {
+    const modal = document.getElementById('confirm-modal');
+    const cancelBtn = document.getElementById('cancel-modal-btn');
+    const confirmBtn = document.getElementById('confirm-modal-btn');
+
+    modal.classList.remove('hidden');
+
+    cancelBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+    confirmBtn.addEventListener('click', () => {
+        localStorage.removeItem('accessToken');
+        document.location.reload();
+    });
 });

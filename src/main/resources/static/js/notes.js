@@ -1,4 +1,41 @@
+// Variables de control
+let notesLoadedFlag = false; // Variable de control para cargar las notas de un usuario hasta que saen solicitadas
+let isProcessing = false; // Variable de control para activar o desactivar botones
+// Paneles de Navegación
+const createNotePanel = document.getElementById('create-note-panel');
+const getNotesPanel = document.getElementById('get-notes-panel');
+// Botones de Navegación
+const createNoteButtonNav = document.getElementById('crear-nota-btn');
+createNoteButtonNav.addEventListener('click', () => {
+    getNotesButtonNav.classList.remove('active');
+    createNoteButtonNav.classList.add('active');
 
+    getNotesButtonNav.disabled = false;
+    createNoteButtonNav.disabled = true;
+
+    createNotePanel.classList.remove('hidden');
+    getNotesPanel.classList.add('hidden');
+});
+const getNotesButtonNav = document.getElementById('ver-notas-btn');
+getNotesButtonNav.addEventListener('click', async () => {
+    createNoteButtonNav.classList.remove('active'); // Conforme haya más botones se deben de agregar los estados
+    getNotesButtonNav.classList.add('active');
+
+    createNoteButtonNav.disabled = false;
+    getNotesButtonNav.disabled = true;
+
+    createNotePanel.classList.add('hidden');
+    getNotesPanel.classList.remove('hidden');
+
+    if(!notesLoadedFlag){
+        const notes = await getNotes();
+        renderizarDivs(notes);
+        notesLoadedFlag = true;
+        // Agregar un div "Sin contenido" si el usuario no tiene notas
+    }
+});
+
+// Formularios
 const createNoteForm = document.getElementById('create-note-panel');
 // Botón de creación y sus estados
 const createNoteButton = document.getElementById('create-note-button');
@@ -6,8 +43,6 @@ const contentNormalCreate = document.getElementById('btn-content-normal-create')
 const contentLoadingCreate = document.getElementById('btn-content-loading-create');
 
 const tagAddBtn = document.getElementById('tag-add-btn');
-
-let isProcessing = false; // Variable de control para activar o desactivar botones
 
 const setCreateNoteLoadingState = (isLoading, button, normal, loading) => {
     /**
@@ -61,6 +96,40 @@ const createNote = async () => {
     return data;
 };
 
+const getNotes = async () => {
+    // Validamos acceso
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+        throw new Error('Sin acceso...');
+    }
+    const response = await fetch('http://localhost:8080/notes', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
+    if(!response.ok){
+        throw new Error("Error al buscar las notas...");
+    }
+    const data = await response.json();
+    return data;
+};
+
+const renderizarDivs = (list) => {
+    const contenedor = document.getElementById('note-list-container');
+    const htmlItems = list.map(item => `
+        <div class="card" id="item-${item.id}">
+            <h3>${item.title}</h3>
+            <p>${item.content}</p>
+            <h4>${item.createdAt}</h4>
+            <ul>
+                ${item.tags.map(tag => `<li>${tag}</li>`).join('')}
+            </ul>
+        </div>
+        `).join('');
+        contenedor.innerHTML = htmlItems;
+};
+
 createNoteForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     setCreateNoteLoadingState(true, createNoteButton, contentNormalCreate, contentLoadingCreate);
@@ -71,6 +140,11 @@ createNoteForm.addEventListener('submit', async (e) => {
         alert(error);
     }finally{
         setCreateNoteLoadingState(false, createNoteButton, contentNormalCreate, contentLoadingCreate);
+        notesLoadedFlag = false;
+        /**
+         * Cuando se crea una nueva nota desactivamos la bandera de notas cargadas
+         * Así, cuando se vuelvan a solicitar se actualiza la lista
+         */
     }
 });
 
