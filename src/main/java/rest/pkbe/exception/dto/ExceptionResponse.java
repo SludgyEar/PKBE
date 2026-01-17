@@ -13,6 +13,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExceptionResponse {
+    /**
+     * DTO para una respuesta errónea hacia el cliente.
+     * Es una esctructura que contiene los datos necesarios para dar a conocer una incidencia
+     */
     
     private LocalDateTime timeStamp;
     private int status;

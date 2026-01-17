@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
         response.setPath(path);
 
         logger.error(
-            "Solicitud fallida... \nTimeStamp: {}\nStatus: {}\nError: {}\nMessage: {}\nPath: {}",
+            "Solicitud fallida... \nTimeStamp: {}\tStatus: {}\nError: {}\tMessage: {}\nPath: {}",
             LocalDateTime.now(), status, error, message, path);
         return response;
     }

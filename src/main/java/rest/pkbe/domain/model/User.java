@@ -107,7 +107,11 @@ public class User implements UserDetails{
         return Collections.emptyList();
     }
 
-    @Override // Este método es utilizado por DaoAuthenticationProvider por lo que tiene que apuntar a la contraseña
+    /**
+     * Estos métodos son utilizados por DaoAuthenticationProvider por lo que tiene que
+     * apuntar a la contraseña
+     */
+    @Override
     public String getPassword() {
         return this.passwordHash;
     }

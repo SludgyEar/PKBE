@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import rest.pkbe.api.dto.request.auth.CreateUserRequest;
 import rest.pkbe.api.dto.request.auth.LoginRequest;
 import rest.pkbe.api.dto.response.auth.AuthResponse;
+import rest.pkbe.api.dto.response.auth.UserDTO;
 import rest.pkbe.domain.model.User;
 import rest.pkbe.domain.service.IUserService;
 
@@ -71,12 +72,13 @@ public class AuthController {
         user.setPasswordHash(passwordEncoder.encode(userRequest.getPasswordHash()));
 
         User saved = userService.register(user);
+        UserDTO res = new UserDTO(saved.getId(), saved.getNombreUsuario(), saved.getEmail());
         logger.info("Operación POST /register - Finalizada");
-        return ResponseEntity.created(new URI("/users/" + saved.getId())).build();
+        return ResponseEntity.created(new URI("/users/" + res.getId())).body(res);
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@CookieValue String refreshToken) {
+    public ResponseEntity<AuthResponse> refreshToken(@CookieValue String refreshToken) {
         logger.info("Iniciando GET /refresh - Renovando Sesión.");
         String[] response = userService.refreshSession(refreshToken);
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", response[1])
