@@ -742,7 +742,7 @@
     flex-wrap: wrap;
     gap: 20px;
     padding: 20px;
-    overflow: scroll;
+    overflow-y: scroll;
     justify-content: center;
 }
 
@@ -752,19 +752,14 @@
     border-radius: 16px;
     padding: 20px;
     width: min(90vw, 300px);
-    /* Ancho máximo 300px, pero se adapta a pantallas pequeñas */
     height: min(40vw, 280px);
-    /* Alto máximo 280px, pero se adapta a pantallas pequeñas */
-    /* Alto fijo para uniformidad */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    /* Organiza elementos uno debajo del otro */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     border: 1px solid rgba(0, 0, 0, 0.05);
     overflow: hidden;
-    /* Evita que el contenido se salga */
 }
 
 /* Efecto Hover (al pasar el mouse) */
@@ -849,4 +844,27 @@
 
 .card ul li:hover {
     background: #dfe4ea;
+}
+
+.notes-not-found{
+    justify-content: center;
+    align-items: center;
+    cursor: default;
+    margin-top: 8%;
+}
+
+.notes-not-found h3{
+    margin-bottom: 0;
+}
+
+.notes-not-found p{
+    flex-grow: 0;
+    margin-bottom: 0;
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.3 ease;
+}
+
+.notes-not-found p:hover{
+    transform: scale(1.1);
 }

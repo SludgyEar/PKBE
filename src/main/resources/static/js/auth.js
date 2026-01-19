@@ -7,14 +7,6 @@ const toLoginBtn = document.getElementById('to-login-btn');
 const loginView = document.getElementById('login-view');
 const registerView = document.getElementById('register-view');
 const notesView = document.getElementById('notes-view');
-toRegisterBtn.addEventListener('click', () => { // Al hacer clic muestra el formulario de registro
-    loginView.classList.add('hidden');
-    registerView.classList.remove('hidden');
-});
-toLoginBtn.addEventListener('click', () => { // Al hacer clic muestra el formulario de login
-    loginView.classList.remove('hidden');
-    registerView.classList.add('hidden');
-});
 
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
@@ -67,7 +59,8 @@ const authenticate = async () => {
     });
 
     if (!response.ok) {
-        throw new Error("Credenciales incorrectas");
+        // throw new Error("Credenciales incorrectas");
+        throw new Error(`Error HTTP: ${response.status}`)
     }
     const data = await response.json();
     localStorage.setItem('accessToken', data.accessToken); // Guardamos el token de acceso en el local storage
@@ -148,6 +141,7 @@ registerForm.addEventListener('submit', async (e) => {
 document.addEventListener('DOMContentLoaded', () =>{
     const token = localStorage.getItem('accessToken');
     if(token){
+        // ¿Cómo validar el token?
         loginView.classList.add('hidden');
         registerView.classList.add('hidden');
         notesView.classList.remove('hidden');
@@ -170,6 +164,17 @@ logOutBtn.addEventListener('click', () => {
     });
     confirmBtn.addEventListener('click', () => {
         localStorage.removeItem('accessToken');
+        modal.classList.add('hidden');
         document.location.reload();
     });
+});
+
+toRegisterBtn.addEventListener('click', () => { // Al hacer clic muestra el formulario de registro
+    loginView.classList.add('hidden');
+    registerView.classList.remove('hidden');
+});
+
+toLoginBtn.addEventListener('click', () => { // Al hacer clic muestra el formulario de login
+    loginView.classList.remove('hidden');
+    registerView.classList.add('hidden');
 });

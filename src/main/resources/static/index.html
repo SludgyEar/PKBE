@@ -219,6 +219,26 @@
                     </div>
                 </div>
             </div>
+            <div id="error-modal" class="modal-overlay hidden">
+                <div class="modal-content">
+                    <i class="fa-solid fa-bomb"></i>
+                    <h3>Upps...</h3>
+                    <h4>Ha ocurrido un error inesperado, inténtalo de nuevo</h4>
+                    <div class="modal-actions">
+                        <button id="reload-modal-btn" class="btn btn-primary">Recargar la página</button>
+                    </div>
+                </div>
+            </div>
+            <div id="expired-session-modal" class="modal-overlay hidden">
+                <div class="modal-content">
+                    <i class="fa-solid fa-shield-dog"></i>
+                    <h3>Upps...</h3>
+                    <h4>La sesión ha expirado, por favor ingresa de nuevo...</h4>
+                    <div class="modal-actions">
+                        <button id="exp-session-modal-btn" class="btn btn-primary">Iniciar Sesión</button>
+                    </div>
+                </div>
+            </div>
             <div class="card-container">
                 <aside class="side-box">
                     <h2 class="app-logo">Mis Notas</h2>
@@ -287,7 +307,12 @@
                 </form>
 
                 <div class="editor-card hidden" id="get-notes-panel">
-                    <div class="note-list-container" id="note-list-container"></div>
+                    <div class="note-list-container" id="note-list-container">
+                        <div class="card hidden notes-not-found" id="notes-not-found">
+                            <h3>No se encontraron notas...</h3>
+                            <p id="create-note-cuz-not-found"><u>Crear nota</u></p>
+                        </div>
+                    </div>
                 </div>
 
             </div>
