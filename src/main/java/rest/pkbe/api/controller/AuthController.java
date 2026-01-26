@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -93,6 +94,12 @@ public class AuthController {
                 .body(new AuthResponse(response[0]));
     }
     
-    
+    // @DeleteMapping("/temporal/{id}")
+    // public ResponseEntity<?> temporal (@PathVariable Long id){
+    //     logger.debug("[>] TEST [<] Operación DELETE /temporal/{id} - Borrando Usuario.");
+    //     userService.delete(id);
+    //     logger.debug("[>] TEST [<] Operación DELETE /temporal/{id} - Finalizada");
+    //     return ResponseEntity.ok("Usuario Eliminado");
+    // }
 
 }
