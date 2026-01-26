@@ -69,6 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 // Si no hay encabezado Authorization o no comienza con 'Bearer ', continuar sin
                 // procesar JWT
                 if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                    logger.debug("> Token inexistente: Abortando operación");
                     filterChain.doFilter(request, response);
                     return;
                 }
@@ -104,6 +105,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                  */
                 logger.error("Proceso de Autenticación fallido: Credenciales inválidas");
                 logger.error(ex.getMessage());
+                logger.debug("Limpiando SecurityContextHolder...");
+                SecurityContextHolder.clearContext();
                 resolver.resolveException(request, response, null, ex);
             }
     }
