@@ -85,6 +85,26 @@ public class NoteController {
         logger.info("Operación GET / - Finalizada");
         return ResponseEntity.ok(noteList);
     }
+
+    @GetMapping("/{noteId}")
+    public ResponseEntity<?> getNoteById(@PathVariable Long noteId, @AuthenticationPrincipal User user){
+        logger.info("Iniciando GET /{} - Obtener nota", noteId);
+        /**
+         * Se obtiene una nota dado un id de nota perteneciente a un usuario autenticado
+         * noteId se recupera del path para identificar el recurso
+         * el id de usuario se recupera del token de acceso
+         */
+        Note note = noteService.getNoteById(noteId, user.getId());
+        NoteDTO response = new NoteDTO();
+
+        response.setId(note.getId());
+        response.setTitle(note.getTitle());
+        response.setContent(note.getContent());
+        response.setCreatedAt(note.getCreatedAt().toString().split("T")[0]);
+        response.setTags(note.getNoteTags().stream().map(nt -> nt.getTag().getName()).collect(Collectors.toSet()));
+        logger.info("Operación GET /{} - Finalizada", noteId);
+        return ResponseEntity.ok(response);
+    }
     
     @DeleteMapping("/{noteId}")   // se sacará del token
     public ResponseEntity<?> deleteNoteById(@PathVariable Long noteId, @AuthenticationPrincipal User user) {

@@ -161,4 +161,15 @@ public class NoteServiceImpl implements INoteService{
         }
     }
 
+    @Override
+    public Note getNoteById(Long noteId, Long userId){
+        logger.info("Cargando nota...");
+        Note note = noteRepository.findByIdAndUserIdWithTags(userId, noteId).orElseThrow(() -> {
+            logger.error("Carga fallida: La nota no existe");
+            return new ResourceNotFoundException("La note no existe");
+        });
+        logger.info("Carga exitosa [!]");
+        return note;
+    }
+
 }

@@ -10,6 +10,8 @@ public interface INoteService {
 
     List<Note> getAllNotes(Long userId);
 
+    Note getNoteById(Long noteId, Long userId);
+
     void deleteNoteById(Long noteId, Long userId);
 
     void updateNoteById(Long noteId, Long userId, String title, String content, Set<String> tagNames);

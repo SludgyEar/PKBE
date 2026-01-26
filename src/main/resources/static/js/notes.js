@@ -11,6 +11,10 @@ const getNotesPanel = document.getElementById('get-notes-panel');
 const notesNotFound = document.getElementById('notes-not-found');
 const errorModal = document.getElementById('error-modal');
 const expiredSessionModal = document.getElementById('expired-session-modal');
+/**
+ * Pantallas de operaciones
+ * noteListCont... detecta qué nota fue presionada para cargar sus datos y poder editarla o borrarla */
+const noteListContainer = document.getElementById('note-list-container');
 // Botones modales
 const reloadModalBtn = document.getElementById('reload-modal-btn');
 const expSessionBtn = document.getElementById('exp-session-modal-btn');
@@ -230,7 +234,7 @@ reloadModalBtn.addEventListener('click', async () => {
         }
         const data = await response.json();
         localStorage.setItem('accessToken', data.accessToken);
-        document.location.reload();
+        
     }catch(error){
         expiredSessionModal.classList.remove('hidden');
     }
@@ -242,4 +246,13 @@ expSessionBtn.addEventListener('click', () => {
     notesViewSection.classList.add('hidden');
     loginViewSection.classList.remove('hidden');
     document.location.reload();
+});
+
+noteListContainer.addEventListener('click', (e) => {
+    const card = e.target.closest('[id^="item-"]')
+    if(card){
+        const itemId = card.id.split('-')[1];
+        console.log(itemId);
+        // Esto se lo pasamos a una función que se encarga de abrir un modal para cargar la información
+    }
 });
