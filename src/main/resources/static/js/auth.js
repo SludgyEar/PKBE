@@ -166,6 +166,7 @@ logOutBtn.addEventListener('click', () => {
         localStorage.removeItem('accessToken');
         modal.classList.add('hidden');
         document.location.reload();
+        // TODO: Hacer un request a /logout
     });
 });
 
