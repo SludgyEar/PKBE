@@ -3,6 +3,7 @@ package rest.pkbe.api.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import rest.pkbe.api.dto.request.auth.CreateUserRequest;
 import rest.pkbe.api.dto.request.auth.LoginRequest;
@@ -20,11 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 
@@ -89,17 +92,27 @@ public class AuthController {
                 .maxAge(7 * 24 * 60 * 60)
                 .sameSite("Lax")
                 .build();
-                logger.info("Operación GET /refresh - Finalizada");
+        logger.info("Operación GET /refresh - Finalizada");
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(new AuthResponse(response[0]));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@CookieValue String refreshToken, @AuthenticationPrincipal User user, HttpServletRequest request) {
+        logger.info("Iniciando POST /logout - Cerrando Sesión");
+        String accessToken = request.getHeader("Authorization").split(" ")[1];
+
+        userService.logout(refreshToken, user.getId(), accessToken);
+
+        ResponseCookie cleanCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .build();
+        logger.info("Operación POST /logout - Finalizada");
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cleanCookie.toString()).build();
+    }
     
-    // @DeleteMapping("/temporal/{id}")
-    // public ResponseEntity<?> temporal (@PathVariable Long id){
-    //     logger.debug("[>] TEST [<] Operación DELETE /temporal/{id} - Borrando Usuario.");
-    //     userService.delete(id);
-    //     logger.debug("[>] TEST [<] Operación DELETE /temporal/{id} - Finalizada");
-    //     return ResponseEntity.ok("Usuario Eliminado");
-    // }
 
 }

@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -84,6 +85,7 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
+    @Transactional
     public String[] refreshSession(String refreshToken){
         logger.info("Renovando sesión...");
         /**
@@ -127,11 +129,23 @@ public class UserServiceImpl implements IUserService{
         return res;
     }
     
-    // @Override
-    // public void delete(Long id){
-    //     logger.debug("[>] TEST [<] Eliminando usuario para probar la seguridad de los tokens de acceso");
-    //     userRepository.deleteById(id);
-    //     logger.debug("[>] TEST [<] Usuario eliminado, ahora intente usar su token...");
-    // }
+    public void logout(String refreshToken, Long userId, String accessToken){
+        /**
+         * - Primero revisamos que el token exista antes de borrarlo, si existe, lo borramos dado su id
+         * - Ahora limpiamos el contexto de seguridad
+         */
+        // Para que funcione correctamente tenemos que poner el token de acceso en una
+        // blacklist, por lo que tenemos que obtener el token de acceso del header desde la petición
+        // es decir capturado por el controler y envíado al servicio, para así obtener el jti del token y banearlo
+        RefreshToken oldToken = refreshTokenRepository.findByTokenAndUserId(refreshToken, userId)
+                .orElseThrow(() -> {
+                    logger.error("Intento de renovación de sesión fallida: Credenciales inválidas");
+                    return new BadCredentialsException("Credenciales inválidas");
+                });
+        refreshTokenRepository.deleteById(oldToken.getId());
+        SecurityContextHolder.clearContext();
+
+        logger.debug("");
+    }
 
 }

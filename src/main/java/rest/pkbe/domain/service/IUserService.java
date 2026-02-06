@@ -6,6 +6,5 @@ public interface IUserService {
     User register(User user);
     String []authenticate(String email, String password);
     String []refreshSession(String refreshToken);
-
-    // void delete(Long id); // Test porpuse
+    void logout(String refreshToken, Long userId, String accessToken);
 }

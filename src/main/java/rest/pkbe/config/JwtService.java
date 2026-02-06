@@ -1,6 +1,7 @@
 package rest.pkbe.config;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
@@ -57,6 +58,7 @@ private long refreshExpirationMs;
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + expirationMs))
             .signWith(getSignInKey(), Jwts.SIG.HS256)
+            .id(UUID.randomUUID().toString())
             .compact();
     }
 
@@ -135,13 +137,14 @@ private long refreshExpirationMs;
             .parseSignedClaims(token)
             .getPayload()
             .get("email", String.class);    // En un claim tenemos guardado el email
+        // return extractClaims(token).get("email").toString();
     }
 
     // Método para extraer id del token
     /**
      * Extrae el id de usuario almacenado en el subject del token JWT.
      * @param token token JWT
-     * @return id de usuario como Long
+     * @return id de usuario Long
      */
     public Long extractUserId(String token){
         return Long.valueOf(
@@ -153,5 +156,12 @@ private long refreshExpirationMs;
                 .getSubject()   // En el subject tenemos el id de usuario
         );
     }
-
+    /**
+     * Extrae el id del token para identificarlo
+     * @param token
+     * @return id de token String
+     */
+    public String extractJti(String token){
+        return extractClaims(token).getId();
+    }
 }
