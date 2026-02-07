@@ -30,7 +30,6 @@
 
 ```
 git clone https://github.com/SludgyEar/PKBE.git
-
 ```
 
 2. Configurar base de datos PostgreSQL.
@@ -41,13 +40,11 @@ git clone https://github.com/SludgyEar/PKBE.git
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=remindme
 POSTGRES_DB=remindme_db
-
 ```
 + Levantar la base de datos.
 
 ```
 docker-compose up -d
-
 ```
 
 3. Configurar proyecto Spring Boot.
@@ -70,13 +67,11 @@ spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.show-sql=false
 spring.jpa.properties.hibernate.format_sql=true
-
 ```
 + Activar Flyway.
 ```
 spring.flyway.enabled=true
 spring.flyway.locations=classpath:db/migration
-
 ```
 + Seguridad JWT.
 ```
@@ -85,7 +80,6 @@ jwt.header=Authorization
 jwt.secret=TUCLAVESUPERSECRETAYLARGAQUETIENEQUESERNOLAOLVIDESNILACOMPARTASPORESONOLAPONGOAQUI
 jwt.expiration=86400000
 jwt.refresh-expiration=604800000
-
 ```
 + Bitácora (logs).
 ```
@@ -117,7 +111,31 @@ logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} %-5level [%logger{36}] - %msg%n
 
 ```
 ./mvnw spring-boot:run
-
 ```
 
 Abre el proyecto en [localhost:8080](http://localhost:8080)
+
+## Uso de RemindMe
+
++ Cree un usuario.
+Para registrar un usuario deberá ingresar su nombre o nickname, un correo, una contraseña y confirmar esa contraseña.
+
+![Pantalla_de_registro_usuario](/src/main/resources/static/images/register.png)
+
++ Inicie sesión.
+Para iniciar sesión con su usuario deberá ingresar el correo y contraseña que fueron ingresados al registrarse.
+
+![Pantalla_de_inicio_sesion](/src/main/resources/static/images/login.png)
+
++ Cree su primer nota.
+Para crear una nota deberá ingresar un título, escribir el contenido de la nota usando o no formato *Markdown*, después deberá de colocarle una etiqueta para identificar su tema/topic, cuando haya terminado, haga clic en *Guardar nota*.
+
+![Pantalla_creacion_notas](/src/main/resources/static/images/crear_nota.png)
+
++ Visualizar notas.
+Para visualizar sus notas deberá de dar clic en el botón *Ver mis notas*, aquí se mostrarán todas las notas pertenecientes al usuario.
+
+![Pantalla_tus_notas_sin_notas](/src/main/resources/static/images/pantalla_no_notas.png)
+![Pantalla_tus_notas_con_notas](/src/main/resources/static/images/pantalla_notas.png)
+
++ Para cerrar sesión haga clic en el botón de *Cerrar sesión*.
