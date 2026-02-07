@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKBE</title>
+    <link rel="shortcut icon" href="./images/icon.png" type="image/png">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="https://kit.fontawesome.com/77f269903b.js" crossorigin="anonymous"></script>
+    <script src="./js/auth.js" defer type="module"></script>
+    <script src="./js/notes.js" defer type="module"></script>
+</head>
+<body>
+
+
+    
+    <section id="login-view" class="view-section">
+        <div class="view-container">
+            <div class="background-decoration">
+                <ul class="circles">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+            <div class="login-wrapper">
+        
+                <div class="login-card">
+                    <div class="login-header">
+                        <h1 class="login-tittle">Bienvenido</h1>
+                        <p class="login-subtitle">Introduce tus credenciales para continuar</p>
+        
+                        <div class="header-divider">
+                            <div class="divider-line"></div>
+                            <div class="divider-icon">
+                                <i class="fa-solid fa-feather-pointed"></i>
+                            </div>
+                            <div class="divider-line"></div>
+                        </div>
+                    </div>
+        
+                    <form class="login-form" id="login-form">
+                        <div class="form-group">
+                            <label class="form-label" for="email-input">
+                                <i class="fa-solid fa-at"></i> Correo
+                            </label>
+                            <input type="email" class="form-input" placeholder="ejemplo@correo.com" required id="email-input">
+                        </div>
+        
+                        <div class="form-group">
+                            <label class="form-label" for="password-input">
+                                <i class="fa-solid fa-unlock"></i> Contraseña
+                            </label>
+                            <input type="password" class="form-input" placeholder="••••••••••••••" required id="password-input">
+                        </div>
+        
+                        <div id="error-container" class="error-message" style="display: none;">
+                            <span class="error-icon"><i class="fa-solid fa-circle-exclamation"></i></span>
+                            <span id="error-text" class="error-text">Credenciales incorrectas</span>
+                        </div>
+        
+                        <button type="submit" id="login-button" class="login-button">
+                            <span id="btn-content-normal">
+                                Acceder <i class="fa-solid fa-right-to-bracket"></i>
+                            </span>
+                            <span id="btn-content-loading" style="display: none;">
+                                <span class="spinner"></span> Verificando...
+                            </span>
+                        </button>
+                    </form>
+        
+                    <div class="login-footer">
+                        <p class="footer-text">
+                            ¿No tienes cuenta? <a class="footer-link" id="to-register-btn">Regístrate aquí</a>
+                        </p>
+                        <div class="footer-decoration">
+                            <i class="fa-solid fa-mug-hot"></i>
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+    </section>
+
+    <section id="register-view" class="view-section hidden">
+        <div class="view-container">
+                <div class="background-decoration">
+                    <ul class="circles">
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                </div>
+            <div class="login-wrapper">
+                <div class="login-card">
+                
+                    <div class="login-header">
+                        <h1 class="login-tittle">Crear Cuenta</h1>
+                        <p class="login-subtitle">Únete para gestionar tus notas</p>
+                
+                    </div>
+                
+                    <form class="login-form" id="register-form">
+                
+                        <div class="form-group">
+                            <label class="form-label" for="username-register">
+                                <i class="fa-solid fa-user"></i> Usuario
+                            </label>
+                            <input type="text" class="form-input" placeholder="Tu nombre de usuario" required id="username-register">
+                        </div>
+                
+                        <div class="form-group">
+                            <label class="form-label" for="email-register">
+                                <i class="fa-solid fa-at"></i> Correo
+                            </label>
+                            <input type="email" class="form-input" placeholder="ejemplo@correo.com" required id="email-register">
+                        </div>
+                
+                        <div class="form-group">
+                            <label class="form-label" for="password-register">
+                                <i class="fa-solid fa-lock"></i> Contraseña
+                            </label>
+                            <input type="password" class="form-input" placeholder="Crea una contraseña" required id="password-register">
+                        </div>
+                
+                        <div class="form-group">
+                            <label class="form-label" for="password-confirm">
+                                <i class="fa-solid fa-circle-check"></i> Confirma contraseña
+                            </label>
+                            <input type="password" class="form-input" placeholder="Repite la contraseña" required id="password-confirm">
+                        </div>
+                
+                        <div id="error-container-register" class="error-message" style="display: none;">
+                            <span class="error-icon"><i class="fa-solid fa-circle-exclamation"></i></span>
+                            <span id="error-text-register" class="error-text"></span>
+                        </div>
+                
+                        <button type="submit" id="register-button" class="login-button">
+                            <span id="btn-content-normal-reg">
+                                Registrarse <i class="fa-solid fa-user-plus"></i>
+                            </span>
+                            <span id="btn-content-loading-reg" style="display: none;">
+                                <span class="spinner"></span> Creando cuenta...
+                            </span>
+                        </button>
+                    </form>
+                
+                    <div class="login-footer">
+                        <p class="footer-text">
+                            ¿Ya tienes una cuenta? <a class="footer-link" id="to-login-btn">Inicia Sesión</a>
+                        </p>
+                        <div class="footer-decoration">
+                            <i class="fa-solid fa-pencil"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="notes-view">
+        <div class="notes-container">
+            <div class="background-decoration">
+                <ul class="circles">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+            <div id="confirm-modal" class="modal-overlay hidden">
+                <div class="modal-content">
+                    <h3>¿Estás seguro?</h4>
+                    <h4>¡Quédate un rato más!</h4>
+                    <div class="modal-actions">
+                        <button id="cancel-modal-btn" class="btn btn-secondary">Cancelar</button>
+                        <button id="confirm-modal-btn" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+            <div id="error-modal" class="modal-overlay hidden">
+                <div class="modal-content">
+                    <i class="fa-solid fa-bomb"></i>
+                    <h3>Upps...</h3>
+                    <h4>Ha ocurrido un error inesperado, inténtalo de nuevo</h4>
+                    <div class="modal-actions">
+                        <button id="reload-modal-btn" class="btn btn-primary">Recargar la página</button>
+                    </div>
+                </div>
+            </div>
+            <div id="expired-session-modal" class="modal-overlay hidden">
+                <div class="modal-content">
+                    <i class="fa-solid fa-shield-dog"></i>
+                    <h3>Upps...</h3>
+                    <h4>La sesión ha expirado, por favor ingresa de nuevo...</h4>
+                    <div class="modal-actions">
+                        <button id="exp-session-modal-btn" class="btn btn-primary">Iniciar Sesión</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-container">
+                <aside class="side-box">
+                    <h2 class="app-logo">Mis Notas</h2>
+                    <nav style="display: flex; flex-grow: 1; flex-direction: column;">
+                        <button id="crear-nota-btn" class="nav-btn active" disabled>
+                            <span class="icon">
+                                <i class="fa-solid fa-file-circle-plus"></i>
+                                Crear una nota
+                            </span>
+                        </button>
+                        <button id="ver-notas-btn" class="nav-btn">
+                            <span class="icon">
+                                <i class="fa-solid fa-folder-open"></i>
+                                Ver mis notas
+                            </span>
+                        </button>
+                        <button id="cerrar-sesion" class="nav-btn log-out">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            Cerrar sesión
+                        </button>
+                    </nav>
+                </aside>
+        
+                <form class="editor-card" id="create-note-panel">
+        
+                    <div class="editor-header">
+                        <input type="text" class="title-input" placeholder="Título de la nota..." required id="title-input">
+                        <div class="header-actions">
+                            <button class="btn btn-secondary" type="reset">Cancelar</button>
+                            <button class="btn btn-primary" type="submit" id="create-note-button">
+                                <span id="btn-content-normal-create">
+                                    Guardar nota
+                                </span>
+                                <span class="hidden" id="btn-content-loading-create" style="display: inline-flex;">
+                                    <span class="spinner"></span>
+                                    Guardando...
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+        
+                    <div class="editor-body">
+                        <div class="editor-pane">
+                            <label class="pane-label">Markdown / Escribir</label>
+                            <textarea placeholder="Escribe tu nota aquí... (# Hola mundo)" required id="content-input" class="textarea-content"></textarea>
+                            <div class="tag-panel">
+                                <div class="tag-input-wrapper">
+                                    <input type="text" class="form-input" placeholder="Ingresa una etiqueta (Música)" 
+                                    style="margin-top: 10px;" id="tag-input-label">  
+                                    <button type="button" class="btn btn-primary" id="tag-add-btn">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                                <textarea  id="tags-input" readonly style="margin-top: 10px; height: 20%; cursor: default;"></textarea>
+                            </div>
+                        </div>
+        
+                        <div class="editor-pane preview-pane">
+                            <label class="pane-label">Vista Previa</label>
+                            <div class="markdown-preview">
+                                <p class="placeholder-text" style="cursor: default;">La visualización aparecerá aquí...</p>
+                            </div>
+                        </div>
+                    </div>
+        
+                </form>
+
+                <div class="editor-card hidden" id="get-notes-panel">
+                    <div class="note-list-container" id="note-list-container">
+                        <div class="card hidden notes-not-found" id="notes-not-found">
+                            <h3>No se encontraron notas...</h3>
+                            <p id="create-note-cuz-not-found"><u>Crear nota</u></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

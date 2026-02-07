@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,10 +38,12 @@ public class NoteController {
 
     @Autowired
     private INoteService noteService; // Corrección: Inyectamos la interfaz, no la implementación
+    private static final Logger logger = LoggerFactory.getLogger(NoteController.class);
 
     @PostMapping
     public ResponseEntity<?> createNote(@AuthenticationPrincipal User user, @Valid @RequestBody CreateNoteRequest req)
     throws URISyntaxException {
+        logger.info("Iniciando POST / - Crear nota");
         /**
          * Crea una nota con los valores recibidos a través de un DTO
          * Se obtiene el id del usuario que está logeado
@@ -56,11 +60,13 @@ public class NoteController {
             .createdAt(saved.getCreatedAt().toString().split("T")[0])
             .tags(req.getTags())
             .build();
+        logger.info("Operación POST / - Finalizada");
         return ResponseEntity.created(new URI("/user/"+ user.getId() + "/note/" + res.getId())).body(res);
     }
 
     @GetMapping
     public ResponseEntity<?> getAllUserNotes(@AuthenticationPrincipal User user){
+        logger.info("Iniciando GET / - Obtener notas de un usuario");
         /**
          * Obtiene las notas pertenecientes a un usuario dado su id
          * El id se recupera del token de acceso
@@ -76,12 +82,33 @@ public class NoteController {
             .tags(note.getNoteTags().stream().map(nt -> nt.getTag().getName()).collect(Collectors.toSet()))
             .build())
         .toList();
-
+        logger.info("Operación GET / - Finalizada");
         return ResponseEntity.ok(noteList);
+    }
+
+    @GetMapping("/{noteId}")
+    public ResponseEntity<?> getNoteById(@PathVariable Long noteId, @AuthenticationPrincipal User user){
+        logger.info("Iniciando GET /{} - Obtener nota", noteId);
+        /**
+         * Se obtiene una nota dado un id de nota perteneciente a un usuario autenticado
+         * noteId se recupera del path para identificar el recurso
+         * el id de usuario se recupera del token de acceso
+         */
+        Note note = noteService.getNoteById(noteId, user.getId());
+        NoteDTO response = new NoteDTO();
+
+        response.setId(note.getId());
+        response.setTitle(note.getTitle());
+        response.setContent(note.getContent());
+        response.setCreatedAt(note.getCreatedAt().toString().split("T")[0]);
+        response.setTags(note.getNoteTags().stream().map(nt -> nt.getTag().getName()).collect(Collectors.toSet()));
+        logger.info("Operación GET /{} - Finalizada", noteId);
+        return ResponseEntity.ok(response);
     }
     
     @DeleteMapping("/{noteId}")   // se sacará del token
     public ResponseEntity<?> deleteNoteById(@PathVariable Long noteId, @AuthenticationPrincipal User user) {
+        logger.info("Iniciando DELETE /{} - Eliminar nota", noteId);
         /**
          * Se elimina una nota dado un id de usuario y un id de nota
          * noteId se recupera del path para identificar el recurso
@@ -89,17 +116,20 @@ public class NoteController {
          * Se elimina la nota pero no la tag, ya que una tag puede ser utilizada por una o más notas
          */
         noteService.deleteNoteById(noteId, user.getId());
+        logger.info("Operación DELETE /{} - Finalizada", noteId);
         return ResponseEntity.ok("La nota con id " + noteId + " perteneciente al usuario con id " + user.getId() + " se ha eliminado.");
     }
     
     @PatchMapping("/{noteId}")
     public ResponseEntity<?> updateNoteById(@AuthenticationPrincipal User user, @PathVariable Long noteId, @RequestBody NoteDTO req){
+        logger.info("Iniciando PATCH /{} - Actulizar nota", noteId);
         /**
          * noteId se recupera del path para identificar el recurso
          * el id de usuario se recupera del token de acceso
          * Además se incluye un DTO que contiene los nuevos datos que se requieren actualizar
          */
         noteService.updateNoteById(noteId, user.getId(), req.getTitle(), req.getContent(), req.getTags());
+        logger.info("Operación PATCH /{} - Finalizada", noteId);
         return ResponseEntity.ok("La nota con el id " + noteId + " perteneciente al usuario con id " + user.getId() + " ha sido actualizada.");
     }
 

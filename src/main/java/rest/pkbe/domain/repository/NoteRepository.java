@@ -20,4 +20,6 @@ public interface NoteRepository extends JpaRepository<Note, Long>{
 
     Optional<Note> findByIdAndUserId(@NonNull Long noteId, @NonNull Long userId);
     
+    @Query("SELECT n FROM Note n JOIN FETCH n.noteTags WHERE n.user.id = :userId AND n.id = :noteId")
+    Optional<Note> findByIdAndUserIdWithTags(@Param("userId") Long userId, @Param("noteId") Long noteId);
 }

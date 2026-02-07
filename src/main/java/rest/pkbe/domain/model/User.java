@@ -31,7 +31,7 @@ import lombok.ToString;
 @Table(name = "users")
 @Setter
 @Getter
-@ToString(exclude = {"notas", "tags"})
+@ToString(exclude = {"notas", "tags", "token", "passwordHash", "email"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -107,7 +107,11 @@ public class User implements UserDetails{
         return Collections.emptyList();
     }
 
-    @Override // Este método es utilizado por DaoAuthenticationProvider por lo que tiene que apuntar a la contraseña
+    /**
+     * Estos métodos son utilizados por DaoAuthenticationProvider por lo que tiene que
+     * apuntar a la contraseña
+     */
+    @Override
     public String getPassword() {
         return this.passwordHash;
     }

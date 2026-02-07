@@ -8,8 +8,8 @@ target/
 .vscode/
 .env
 .mvn/
+/logs
 
 ### Spring Boot ###
 src/main/resources/application.properties
-src/test
 src/main/resources/META-INF/additional-spring-configuration-metadata.json
