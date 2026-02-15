@@ -111,6 +111,10 @@ logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} %-5level [%logger{36}] - %msg%n
 ```
 ./mvnw spring-boot:run
 ```
+El siguiente comando también es válido.
+```
+mvnw.cmd spring-boot:run
+```
 
 Abre el proyecto en [localhost:8080](http://localhost:8080)
 
