@@ -314,7 +314,7 @@ public class GlobalExceptionHandler {
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(buildResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno de servidor", 
-                        "Ocurrió un error inesperado en el servidor. Intente más tarde", request.getRequestURI()));
+                        "Ocurrió un error inesperado en el servidor. Intente más tarde.", request.getRequestURI()));
     }
 
 }

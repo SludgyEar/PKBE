@@ -1,6 +1,5 @@
 package rest.pkbe.domain.service.impl;
 
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -18,8 +17,10 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import rest.pkbe.config.JwtService;
+import rest.pkbe.domain.model.BlacklistedToken;
 import rest.pkbe.domain.model.RefreshToken;
 import rest.pkbe.domain.model.User;
+import rest.pkbe.domain.repository.BlacklistedTokenRepository;
 import rest.pkbe.domain.repository.RefreshTokenRepository;
 import rest.pkbe.domain.repository.UserRepository;
 import rest.pkbe.domain.service.IUserService;
@@ -31,6 +32,8 @@ public class UserServiceImpl implements IUserService{
     private UserRepository userRepository;
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    private BlacklistedTokenRepository blacklistedTokenRepository;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -129,23 +132,34 @@ public class UserServiceImpl implements IUserService{
         return res;
     }
     
-    public void logout(String refreshToken, Long userId, String accessToken){
+    @Transactional
+    public void logout(String refreshToken, Long userId, String bearerToken){
         /**
-         * - Primero revisamos que el token exista antes de borrarlo, si existe, lo borramos dado su id
-         * - Ahora limpiamos el contexto de seguridad
+         * @param bearerToken: "Bearer adsfadf14141...."
+         * - Primero revisamos que el token de refresco exista antes de borrarlo, si existe, lo borramos dado su id
+         * - A través del Bearer Token obtenemos el jti y exp del token para crear un objeto de Token Baneado y persistirlo
+         * - Por último, limpiamos el contexto de seguridad
          */
-        // Para que funcione correctamente tenemos que poner el token de acceso en una
-        // blacklist, por lo que tenemos que obtener el token de acceso del header desde la petición
-        // es decir capturado por el controler y envíado al servicio, para así obtener el jti del token y banearlo
+        logger.info("Cerrando la sesión...");
         RefreshToken oldToken = refreshTokenRepository.findByTokenAndUserId(refreshToken, userId)
                 .orElseThrow(() -> {
-                    logger.error("Intento de renovación de sesión fallida: Credenciales inválidas");
+                    logger.error("Intento de cierre de sesión fallido: Credenciales inválidas");
                     return new BadCredentialsException("Credenciales inválidas");
                 });
-        refreshTokenRepository.deleteById(oldToken.getId());
-        SecurityContextHolder.clearContext();
 
-        logger.debug("");
+        refreshTokenRepository.deleteById(oldToken.getId());
+        String accessToken = bearerToken.split("bearer token:")[0];
+        String jti = jwtService.extractJti(accessToken);
+        Date expDate = jwtService.extracExpiration(accessToken);
+        LocalDateTime expLocalDateTime = LocalDateTime.ofInstant(expDate.toInstant(), ZoneId.systemDefault());
+        
+        BlacklistedToken bannedToken = new BlacklistedToken();
+        bannedToken.setId(jti);
+        bannedToken.setExpirationDate(expLocalDateTime);
+        blacklistedTokenRepository.save(bannedToken);
+        
+        SecurityContextHolder.clearContext();
+        logger.debug("Sesión cerrada exitosamente: Token de acceso baneado [!]");
     }
 
 }

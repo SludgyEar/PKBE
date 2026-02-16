@@ -2,6 +2,7 @@ package rest.pkbe.config;
 
 import java.io.IOException;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -19,6 +21,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 // import lombok.RequiredArgsConstructor;
+import rest.pkbe.domain.repository.BlacklistedTokenRepository;
 
 /**
  * Filtro de autenticación JWT que intercepta cada petición HTTP.
@@ -36,16 +39,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     private final UserDetailsServiceConfig userDetailsServiceConfig;
     // Interfaz que intercepta y resuelve excepciones que ocurren durante la ejecución de una petición HTTP (antes de llegar al controller correspondiente (middleware))
     private final HandlerExceptionResolver resolver;
+    // Repositorio para comprobar el estado del token de acceso
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     public JwtAuthenticationFilter(
         JwtService jwtService,
         UserDetailsServiceConfig userDetailsServiceConfig,
-        @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver){
+        @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver,
+        BlacklistedTokenRepository blacklistedTokenRepository){
 
         this.jwtService = jwtService;
         this.userDetailsServiceConfig = userDetailsServiceConfig;
         this.resolver = resolver;
+        this.blacklistedTokenRepository = blacklistedTokenRepository;
     }
 
     /**
@@ -75,9 +82,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 }
                 // Extraer el token JWT del encabezado
                 jwt = authHeader.substring(7);
+                logger.debug("> Token capturado");
+                // Extraer el jti del token
+                String jti = jwtService.extractJti(jwt);
+                // Comprobar si el token no está baneado
+                if(blacklistedTokenRepository.existsById(jti)){
+                    logger.error("El token ha sido revocado.");
+                    throw new CredentialsExpiredException("El token es inválido");
+                }
                 // Extraer el email del usuario desde el token
                 userEmail = jwtService.extractEmail(jwt);
-                logger.debug("> Token capturado");
                 // Si se extrajo un email y el usuario aún no está autenticado en el contexto
                 if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     // Cargar los detalles del usuario desde la base de datos

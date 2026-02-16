@@ -101,6 +101,7 @@ public class AuthController {
     public ResponseEntity<?> logout(@CookieValue String refreshToken, @AuthenticationPrincipal User user, HttpServletRequest request) {
         logger.info("Iniciando POST /logout - Cerrando Sesión");
         String accessToken = request.getHeader("Authorization").split(" ")[1];
+        // Str original: Authorization Bearer 12adfadfnaidf... -> accessToken: Bearer sadfadf13991...
 
         userService.logout(refreshToken, user.getId(), accessToken);
 

@@ -162,11 +162,23 @@ logOutBtn.addEventListener('click', () => {
     cancelBtn.addEventListener('click', () => {
         modal.classList.add('hidden');
     });
-    confirmBtn.addEventListener('click', () => {
-        localStorage.removeItem('accessToken');
+    confirmBtn.addEventListener('click', async () => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            document.location.reload();
+        }
+        const response = await fetch('http://localhost:8080/auth/logout', {
+            method: 'POST',
+            credentials: 'include',  // Envía las cookies
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,   // Envía el token 
+            }
+        });
+        
         modal.classList.add('hidden');
+
+        localStorage.removeItem('accessToken');
         document.location.reload();
-        // TODO: Hacer un request a /logout
     });
 });
 
