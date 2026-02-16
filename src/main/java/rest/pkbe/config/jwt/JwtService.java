@@ -1,4 +1,4 @@
-package rest.pkbe.config;
+package rest.pkbe.config.jwt;
 
 import java.util.Date;
 import java.util.UUID;

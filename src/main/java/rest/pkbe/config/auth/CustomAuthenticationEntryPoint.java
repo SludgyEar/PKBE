@@ -1,4 +1,4 @@
-package rest.pkbe.config;
+package rest.pkbe.config.auth;
 
 import java.io.IOException;
 

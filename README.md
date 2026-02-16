@@ -16,6 +16,7 @@ Enfocada en el uso individual, te permite almacenar material subjetivo, tareas, 
 | HTML      | Java     |
 | CSS     | Spring Boot     |
 | JS      | PostgreSQL     |
+|       | Flyway     |
 
 ## Requisitos
 
@@ -142,3 +143,9 @@ Para visualizar sus notas deberá de dar clic en el botón *Ver mis notas*, aqu�
 ![Pantalla_tus_notas_con_notas](/src/main/resources/static/images/pantalla_notas.png)
 
 + Para cerrar sesión haga clic en el botón de *Cerrar sesión*.
+
+## Desarrollo
+
++ Estructura del proyecto.
+
+![Estrucura_proyecto](./project-structure.png)

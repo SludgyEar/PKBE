@@ -1,4 +1,4 @@
-package rest.pkbe.config;
+package rest.pkbe.config.auth;
 
 import java.io.IOException;
 
@@ -20,6 +20,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import rest.pkbe.config.jwt.JwtService;
 // import lombok.RequiredArgsConstructor;
 import rest.pkbe.domain.repository.BlacklistedTokenRepository;
 

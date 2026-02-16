@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import rest.pkbe.config.JwtService;
+import rest.pkbe.config.jwt.JwtService;
 import rest.pkbe.domain.model.BlacklistedToken;
 import rest.pkbe.domain.model.RefreshToken;
 import rest.pkbe.domain.model.User;
@@ -137,7 +137,7 @@ public class UserServiceImpl implements IUserService{
         /**
          * @param bearerToken: "Bearer adsfadf14141...."
          * - Primero revisamos que el token de refresco exista antes de borrarlo, si existe, lo borramos dado su id
-         * - A través del Bearer Token obtenemos el jti y exp del token para crear un objeto de Token Baneado y persistirlo
+         * - A través del Bearer Token obtenemos el jti y exp del token para crear un objeto de Token Baneado y persistirlos
          * - Por último, limpiamos el contexto de seguridad
          */
         logger.info("Cerrando la sesión...");

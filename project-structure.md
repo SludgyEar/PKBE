@@ -24,11 +24,15 @@
                             └── 📁note
                                 ├── NoteDTO.java
                 └── 📁config
-                    ├── CustomAuthenticationEntryPoint.java
-                    ├── JwtAuthenticationFilter.java
-                    ├── JwtService.java
+                    └── 📁auth
+                        ├── CustomAuthenticationEntryPoint.java
+                        ├── JwtAuthenticationFilter.java
+                        ├── UserDetailsServiceConfig.java
+                    └── 📁jwt
+                        ├── JwtService.java
+                    └── 📁tasks
+                        ├── BlackListCleanupTask.java
                     ├── SecurityConfig.java
-                    ├── UserDetailsServiceConfig.java
                 └── 📁domain
                     └── 📁model
                         ├── BlacklistedToken.java

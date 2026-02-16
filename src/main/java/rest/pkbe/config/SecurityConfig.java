@@ -23,6 +23,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
+import rest.pkbe.config.auth.CustomAuthenticationEntryPoint;
+import rest.pkbe.config.auth.JwtAuthenticationFilter;
+import rest.pkbe.config.auth.UserDetailsServiceConfig;
 /**
  * Configuración principal de seguridad para la aplicación.
  * Define la política de autenticación, autorización, manejo de sesiones y filtros de seguridad.
